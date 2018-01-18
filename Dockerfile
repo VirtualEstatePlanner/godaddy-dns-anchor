@@ -11,7 +11,7 @@ COPY \
                   crontab.txt /crontab.txt
 
 COPY \
-               DNS-Anchor-georgulas-com.sh /DNS-Anchor-georgulas-com.sh
+               DNS-Anchor.sh /DNS-Anchor.sh
 
 COPY \
                                   entry.sh /entry.sh
