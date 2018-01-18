@@ -17,7 +17,7 @@ COPY \
                                   entry.sh /entry.sh
 
 RUN \
-    chmod 755 /DNS-Anchor-georgulas-com.sh /entry.sh && \
+    chmod 755 /DNS-Anchor.sh /entry.sh && \
              /usr/bin/crontab /crontab.txt
 
 CMD ["/entry.sh"]
