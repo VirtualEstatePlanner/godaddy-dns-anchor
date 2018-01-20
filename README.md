@@ -8,4 +8,6 @@ You will also need to declare the following environment variables:
 
 DOMAIN
 
+HOST_TYPE
+
 HOST
