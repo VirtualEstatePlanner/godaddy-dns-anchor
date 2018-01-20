@@ -1,42 +1,41 @@
 FROM alpine:latest
 LABEL maintainer georgegeorgulas@gmail.com
 
-RUN \
-# prepare apk
-                                  apk update && \
-                                 apk upgrade && \
-# install packages
-            apk add --update bash curl dcron && \
-# clean up ask for smaller layer size
-                     rm -rf /var/cache/apk/*
+# add files
+COPY                             crontab.txt /crontab.txt
+COPY                   env_secrets_expand.sh /env_secrets_expand.sh
+COPY                   godaddy-dns-anchor.sh /godaddy-dns-anchor.sh
+COPY                                entry.sh /entry.sh
 
 # Declare GoDaddy API environment variables as secrets for env_secret_expand command
 ENV GODADDY_API_KEY DOCKER-SECRET->GODADDY_API_KEY
 ENV GODADDY_API_SECRET DOCKER-SECRET->GODADDY_API_SECRET
 
+# Declare other environment variables with default values to keep scripts happy
+ENV DOMAIN example.org
+ENV HOST examplesubdomain
 
-
-# add crontab file
-COPY \
-                                 crontab.txt /crontab.txt
-
-# add scripts
-COPY \
-                       env_secrets_expand.sh /env_secrets_expand.sh
-
-COPY \
-                       godaddy-dns-anchor.sh /godaddy-dns-anchor.sh
-
-COPY \
-                                    entry.sh /entry.sh
-
+# Do the actual work of building the image
 RUN \
-# make scripts executable
+
+# Make scripts executable
             chmod 755 /godaddy-dns-anchor.sh && \
-                                   /entry.sh && \
-                       env_secrets_expand.sh && \
+                         chmod 755 /entry.sh && \
+             chmod 755 env_secrets_expand.sh && \
 
-# load crontab file into crontab
-                            /usr/bin/crontab /crontab.txt
+# Load crontab file into crontab
+               /usr/bin/crontab /crontab.txt && \
 
+# Prepare apk
+                                  apk update && \
+# Upgrade any underlying packages missed by our base image in the name of security best practices
+                                 apk upgrade && \
+
+# Install our required packages
+            apk add --update bash curl dcron && \
+
+# Clean up the chaff from apk for smaller final layer size
+                     rm -rf /var/cache/apk/*
+
+# Launch the container with our shell script to both update once and launch crontab
 ENTRYPOINT ["/entry.sh"]
