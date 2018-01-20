@@ -1,4 +1,4 @@
-FROM crhan:rpi-node:7.6
+FROM georgegeorgulasiv/rpi-alpine-cross:latest
 LABEL maintainer georgegeorgulas@gmail.com
 
 # add files
