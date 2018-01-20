@@ -1,8 +1,7 @@
 #!/bin/bash
 # godaddy-dns-anchor with docker secrets
 # MAINTAINER georgegeorgulas@gmail.com
- 
- 
+
 ###########################################
 # 
 # Do you ever hate having a dynamic IP address?  Do you hate GoDaddy DNS but are stuck with them for some reason?
@@ -18,9 +17,11 @@ source /env_secrets_expand.sh
  
 ### Declare GoDaddy API stuff
 # use docker secrets here, obviously
+GODADDY_API_KEY=DOCKER_SECRET->GODADDY_API_KEY
+GODADDY_API_SECRET=DOCKER_SECRET->GODADDY_API_SECRET
 
-Key=env_secret_expand 'GODADDY_API_KEY'
-Secret=env_secret_expand 'GODADDY_API_SECRET'
+Key=GODADDY_API_KEY
+Secret=GODADDY_API_SECRET
 
 ###Example Configuration
 
