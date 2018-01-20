@@ -3,7 +3,6 @@
 # MAINTAINER georgegeorgulas@gmail.com
 
 ###########################################
-# 
 # Do you ever hate having a dynamic IP address?  Do you hate GoDaddy DNS but are stuck with them for some reason?
 # 
 # (It’s most likely this reason is a customer stubbornly grasping at the straws of what they know, that being GoDaddy.)
@@ -13,6 +12,7 @@
 # You can even make this script do automation-y stuff based on the anchor's attempt to update succeeding or failing.
 ###########################################
 
+# let this script expand docker secrets
 source /env_secrets_expand.sh
  
 ### Declare GoDaddy API stuff
