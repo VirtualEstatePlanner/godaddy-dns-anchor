@@ -18,8 +18,8 @@ source /env_secrets_expand.sh
 ### Declare GoDaddy API stuff
 # use docker secrets here, obviously
 
-Key=DOCKER_SECRET->GODADDY_API_KEY
-Secret=DOCKER_SECRET->GODADDY_API_SECRET
+Key=DOCKER-SECRET->GODADDY_API_KEY
+Secret=DOCKER-SECRET->GODADDY_API_SECRET
 
 ###Example Configuration
 
