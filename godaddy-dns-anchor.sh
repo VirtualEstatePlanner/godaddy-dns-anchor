@@ -26,7 +26,7 @@ Secret=$GODADDY_API_SECRET
 # Domain
 Domain=$DOMAIN
 # Record type
-Type=A
+Type=$HOST_TYPE
 # Record name
 Name=$HOST
 
