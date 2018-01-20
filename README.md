@@ -1,5 +1,9 @@
-# godaddy-dns-anchor
-Creates dynamic DNS for godaddy-registered domains using environment variables for your $GODADDY_API_KEY, $GODADDY_SECRET, $HOST, and $DOMAIN (in the format yourdomain.tld)
+You will need the following docker secrets declared and available to this container:
 
+GODADDY_API_KEY
+GODADDY_API_SECRET
 
-To use docker secrets for those values, set the value of the environent variable to /run/secrets/<secret_name>.
+You will also need to declare the following environment variables:
+
+DOMAIN
+HOST
