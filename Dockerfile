@@ -11,8 +11,8 @@ RUN \
                      rm -rf /var/cache/apk/*
 
 # Declare GoDaddy API environment variables as secrets for env_secret_expand command
-ENV $GODADDY_API_KEY="DOCKER-SECRET->GODADDY_API_KEY"
-ENV $GODADDY_API_SECRET="DOCKER-SECRET->GODADDY_API_SECRET"
+ENV GODADDY_API_KEY="DOCKER-SECRET->GODADDY_API_KEY"
+ENV GODADDY_API_SECRET="DOCKER-SECRET->GODADDY_API_SECRET"
 
 
 
