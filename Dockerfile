@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM crhan:rpi-node:7.6
 LABEL maintainer georgegeorgulas@gmail.com
 
 # add files
@@ -13,7 +13,11 @@ ENV GODADDY_API_SECRET DOCKER-SECRET->GODADDY_API_SECRET
 
 # Declare other environment variables with default values to keep scripts happy
 ENV DOMAIN example.org
+ENV HOST_TYPE A
 ENV HOST examplesubdomain
+
+# allow cross-compile for arm from x86 servers (such as docker hub)
+RUN                  [ "cross-build-start" ]
 
 # Make scripts executable
 RUN         chmod 755 /godaddy-dns-anchor.sh && \
@@ -29,6 +33,8 @@ RUN         chmod 755 /godaddy-dns-anchor.sh && \
             apk add --update bash curl dcron && \
 # Clean up the chaff from apk for smaller final layer size
                      rm -rf /var/cache/apk/*
+RUN                    [ "cross-build-end" ]
+
 
 # Launch the container with our shell script to both update once and launch crontab
 ENTRYPOINT ["/entry.sh"]
