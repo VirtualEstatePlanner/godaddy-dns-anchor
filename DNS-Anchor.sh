@@ -1,19 +1,29 @@
 #!/bin/bash
+# godaddy-dns-anchor with docker secrets
+# MAINTAINER georgegeorgulas@gmail.com
+ 
  
 ###########################################
+# 
 # Do you ever hate having a dynamic IP address?  Do you hate GoDaddy DNS but are stuck with them for some reason?
-# This is a simple DDNS script to update records hosted on GoDaddy's DNS. Just schedule it in crontab.
-# If you are using the georgegeorgulasiv/godaddy-dns-anchor Docker image, by default cron runs the anchor every 5 minutes.
-# You can even make it do stuff (like automation-y things) on the anchor's attempt to update succeeding or failing.
-# MAINTAINER georgegeorgulas@gmail.com
+# 
+# (It’s most likely this reason is a customer stubbornly grasping at the straws of what they know, that being GoDaddy.)
+# 
+# Do you want to dockerize this process, and also keep your API keys safe and sound?  Well, now you can, with no effort.
+# 
+# You can even make this script do automation-y stuff based on the anchor's attempt to update succeeding or failing.
 ###########################################
 
-# Begin settings
+source /env_secrets_expand.sh
+ 
+### Declare GoDaddy API stuff
+# use docker secrets here, obviously
 
-Key=$GODADDY_API_KEY
-Secret=$GODADDY_API_SECRET
+Key=env_secret_expand GODADDY_API_KEY
+Secret=env_secret_expand GODADDY_API_SECRET
 
 ###Example Configuration
+
 # Domain
 Domain=$DOMAIN
 # Record type
@@ -30,13 +40,10 @@ CheckURL=http://api.ipify.org
 SuccessExec='/bin/echo "$(date): My public IP changed to ${PublicIP}!">>../dns-anchor.log'
  
 # Optional scripts/programs/commands to execute on update failure. Leave blank to disable.
-FailExec='/bin/echo "$(date): Error!  DNS not updated!">>'
+FailExec='/bin/echo "$(date): ERROR: DNS update failed for some reason, but most likely because of Donald Trump.”>>'
 # End settings
 
-
-Curl=$(which curl 2>/dev/null)
-[ "${Curl}" = "" ] &&
-echo "Error: Unable to find 'curl CLI'." && exit 1
+# check for api key and secret being present
 [ -z "${Key}" ] || [ -z "${Secret}" ] &&
 echo "Error: Requires API 'Key/Secret' value." && exit 1
 [ -z "${Domain}" ] &&
@@ -50,6 +57,7 @@ echo -n>>${CachedIP} 2>/dev/null
 [ -z "${CheckURL}" ] && CheckURL=http://api.ipify.org
 echo -n "Checking current 'Public IP' from '${CheckURL}'..."
 PublicIP=$(${Curl} -kLs ${CheckURL})
+
 if [ $? -eq 0 ] && [[ "${PublicIP}" =~ [0-9]{1,3}\.[0-9]{1,3} ]];then
   echo "${PublicIP}!"
 else
@@ -57,6 +65,7 @@ else
   eval ${FailedExec}
   exit 1
 fi
+
 if [ "$(cat ${CachedIP} 2>/dev/null)" != "${PublicIP}" ];then
   echo -n "Checking '${Domain}' IP records from 'GoDaddy'..."
   Check=$(${Curl} -kLsH"Authorization: sso-key ${Key}:${Secret}" \
@@ -66,7 +75,6 @@ if [ "$(cat ${CachedIP} 2>/dev/null)" != "${PublicIP}" ];then
   if [ $? -eq 0 ] && [ "${Check}" = "${PublicIP}" ];then
     echo -n ${Check}>${CachedIP}
     echo -e "unchanged!\nCurrent 'Public IP' matches 'GoDaddy' records. No update required!">>../dns-anchor.log
-    exit 0
   else
     echo -en "changed!\nUpdating '${Domain}'..."
     Update=$(${Curl} -kLsXPUT -H"Authorization: sso-key ${Key}:${Secret}" \
@@ -86,4 +94,5 @@ if [ "$(cat ${CachedIP} 2>/dev/null)" != "${PublicIP}" ];then
 else
   echo "Current 'Public IP' matches 'Cached IP' recorded. No update required!"
 fi
+
 exit $?
