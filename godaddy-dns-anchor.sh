@@ -44,8 +44,10 @@ SuccessExec='/bin/echo "$(date): My public IP changed to ${PublicIP}!">>../dns-a
 FailExec='/bin/echo "$(date): ERROR: DNS update failed for some reason, but most likely because of Donald Trump.”>>'
 # End settings
 
-# check for api key and secret being present
-[ -z "${Key}" ] || [ -z "${Secret}" ] &&
+# Actually do the work
+Curl=$(which curl 2>/dev/null)
+[ "${Curl}" = "" ] &&
+echo "Error: Unable to find 'curl CLI'." && exit 1[ -z "${Key}" ] || [ -z "${Secret}" ] &&
 echo "Error: Requires API 'Key/Secret' value." && exit 1
 [ -z "${Domain}" ] &&
 echo "Error: Requires 'Domain' value." && exit 1
