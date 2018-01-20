@@ -7,7 +7,7 @@ COPY                   env_secrets_expand.sh /env_secrets_expand.sh
 COPY                   godaddy-dns-anchor.sh /godaddy-dns-anchor.sh
 COPY                                entry.sh /entry.sh
 
-# Declare GoDaddy API environment variables as secrets for env_secret_expand command
+# Declare GoDaddy API environment variables as secrets
 ENV GODADDY_API_KEY DOCKER-SECRET->GODADDY_API_KEY
 ENV GODADDY_API_SECRET DOCKER-SECRET->GODADDY_API_SECRET
 
@@ -15,25 +15,18 @@ ENV GODADDY_API_SECRET DOCKER-SECRET->GODADDY_API_SECRET
 ENV DOMAIN example.org
 ENV HOST examplesubdomain
 
-# Do the actual work of building the image
-RUN \
-
 # Make scripts executable
-            chmod 755 /godaddy-dns-anchor.sh && \
+RUN         chmod 755 /godaddy-dns-anchor.sh && \
                          chmod 755 /entry.sh && \
              chmod 755 env_secrets_expand.sh && \
-
 # Load crontab file into crontab
                /usr/bin/crontab /crontab.txt && \
-
 # Prepare apk
                                   apk update && \
 # Upgrade any underlying packages missed by our base image in the name of security best practices
                                  apk upgrade && \
-
 # Install our required packages
             apk add --update bash curl dcron && \
-
 # Clean up the chaff from apk for smaller final layer size
                      rm -rf /var/cache/apk/*
 
